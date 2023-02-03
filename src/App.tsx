@@ -1,34 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import * as esbuid from "esbuild-wasm";
+import { useEffect, useRef, useState } from "react";
+
+import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [input, setInput] = useState("");
+  const [code, setCode] = useState("");
+
+  const ref = useRef<any>();
+
+  const startService = async () => {
+    ref.current = await esbuid.startService({
+      worker: true,
+      wasmURL: "/esbuild.wasm",
+    });
+  };
+
+  useEffect(() => {
+    startService();
+  }, []);
+
+  const onClick = async () => {
+    if (!ref.current) return;
+
+    // const result = await ref.current.transform(input, {
+    //   loader: "jsx",
+    //   target: "es2015",
+    // });
+
+    const result = await ref.current.build({
+      bundle: true,
+      write: false,
+      entryPoints: ["index.js"],
+      plugins: [unpkgPathPlugin()],
+    });
+
+    console.log(result.outputFiles[0].text);
+    setCode(result.outputFiles[0].text);
+  };
 
   return (
-    <div className="App">
+    <div>
+      <textarea
+        onChange={(e) => setInput(e.target.value)}
+        value={input}
+      ></textarea>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <button onClick={onClick}>Submit</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <pre>{code}</pre>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
