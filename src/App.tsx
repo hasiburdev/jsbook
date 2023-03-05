@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import * as esbuild from "esbuild-wasm";
 import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
+import { fetchPlugin } from "./plugins/fetch-plugin";
 const App = () => {
   const [input, setInput] = useState("");
   const [code, setCode] = useState("");
@@ -21,7 +22,11 @@ const App = () => {
       entryPoints: ["index.js"],
       bundle: true,
       write: false,
-      plugins: [unpkgPathPlugin()],
+      plugins: [unpkgPathPlugin(), fetchPlugin(input)],
+      define: {
+        "process.env.NODE_ENV": '"production"',
+        global: "window",
+      },
     });
     console.log(result);
     setCode(result.outputFiles[0].text);
