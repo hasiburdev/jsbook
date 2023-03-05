@@ -37,7 +37,6 @@ export const fetchPlugin = (inputCode: string) => {
           document.head.appendChild(style);
         `;
 
-        console.log(args.path);
         const result: esbuild.OnLoadResult = {
           loader: "jsx",
           contents,
@@ -49,7 +48,6 @@ export const fetchPlugin = (inputCode: string) => {
       build.onLoad({ filter: /.*/ }, async (args: any) => {
         const { data, request } = await axios.get(args.path);
 
-        console.log(args.path);
         const result: esbuild.OnLoadResult = {
           loader: "jsx",
           contents: data,
