@@ -4,7 +4,6 @@ import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
 import { fetchPlugin } from "./plugins/fetch-plugin";
 const App = () => {
   const [input, setInput] = useState("");
-  const [code, setCode] = useState("");
   const ref = useRef<any>();
   const iframe = useRef<any>();
 
@@ -19,6 +18,7 @@ const App = () => {
     if (!ref.current) {
       return;
     }
+    iframe.current.srcdoc = html;
     const result = await ref.current.build({
       entryPoints: ["index.js"],
       bundle: true,
@@ -29,14 +29,6 @@ const App = () => {
         global: "window",
       },
     });
-    console.log(result);
-    // setCode(result.outputFiles[0].text);
-    // try {
-    //   eval(result.outputFiles[0].text);
-    // } catch (error) {
-    //   console.log(error);
-    // }
-    //
     iframe.current.contentWindow.postMessage(result.outputFiles[0].text, "*");
   };
 
@@ -67,8 +59,12 @@ const App = () => {
       <div>
         <button onClick={onClick}>Submit</button>
       </div>
-      <pre>{code}</pre>
-      <iframe ref={iframe} srcDoc={html} sandbox="allow-scripts" />
+      <iframe
+        title="code preview"
+        ref={iframe}
+        srcDoc={html}
+        sandbox="allow-scripts"
+      />
     </div>
   );
 };
