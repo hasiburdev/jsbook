@@ -2,10 +2,14 @@ import { useEffect, useState, useRef } from "react";
 import * as esbuild from "esbuild-wasm";
 import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
 import { fetchPlugin } from "./plugins/fetch-plugin";
+import CodeEditor from "./components/code-editor";
+import { useMonaco } from "@monaco-editor/react";
 const App = () => {
   const [input, setInput] = useState("");
   const ref = useRef<any>();
   const iframe = useRef<any>();
+
+  const monaco = useMonaco();
 
   const startService = async () => {
     ref.current = await esbuild.startService({
@@ -30,6 +34,10 @@ const App = () => {
       },
     });
     iframe.current.contentWindow.postMessage(result.outputFiles[0].text, "*");
+
+    if (monaco) {
+      console.log(monaco.editor.getModels()[0].getValue());
+    }
   };
 
   const html = `
@@ -47,11 +55,20 @@ const App = () => {
 `;
 
   useEffect(() => {
+    if (monaco) {
+      console.log("App", monaco);
+    }
+  }, [monaco]);
+  useEffect(() => {
     startService();
   }, []);
 
   return (
     <div>
+      <CodeEditor
+        initialValue="console.log('hello')"
+        onChange={(value) => setInput(value)}
+      />
       <textarea
         value={input}
         onChange={(e) => setInput(e.target.value)}
