@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import "bulmaswatch/superhero/bulmaswatch.min.css";
 
 const domNode = document.getElementById("root");
 const root = createRoot(domNode as HTMLElement);
