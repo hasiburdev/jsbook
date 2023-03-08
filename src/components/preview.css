@@ -16,3 +16,8 @@
   right: 0;
   opacity: 0;
 }
+.preview-error {
+  position: absolute;
+  inset: 10px;
+  color: red;
+}
