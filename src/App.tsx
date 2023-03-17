@@ -1,3 +1,4 @@
+import CellList from "./components/cell-list";
 import CodeCell from "./components/code-cell";
 import TextEditor from "./components/text-editor";
 const App = () => {
@@ -5,8 +6,11 @@ const App = () => {
     <div>
       {
         // <CodeCell />
+      }{" "}
+      {
+        //<TextEditor />
       }
-      <TextEditor />
+      <CellList />
     </div>
   );
 };
