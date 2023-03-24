@@ -1,30 +1,38 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CodeEditor from "./code-editor";
 import Preview from "./preview";
-import bundle from "../bundler";
 import Resizable from "./resizable";
 import { Cell } from "../state";
 import { useActions } from "../hooks/use-actions";
+import { useTypedSelector } from "../hooks/use-typed-selector";
 
+import "./code-cell.css";
+import { useCumulativeCode } from "../hooks/use-cumulative-code";
 interface CodeCellProps {
   cell: Cell;
 }
 const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
-  const [code, setCode] = useState("");
-  const [error, setError] = useState("");
-  const { updateCell } = useActions();
+  const { updateCell, createBundle } = useActions();
+
+  const bundle = useTypedSelector((state) => state.bundles?.[cell.id]);
+  const cumulativeCode = useCumulativeCode(cell.id);
+  console.log(cumulativeCode);
 
   useEffect(() => {
+    if (!bundle) {
+      createBundle(cell.id, cumulativeCode);
+      return;
+    }
+
     const timer = setTimeout(async () => {
-      const output = await bundle(cell.content);
-      setCode(output.code);
-      setError(output.error);
+      createBundle(cell.id, cumulativeCode);
     }, 800);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [cell.content]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cell.content, cell.id]);
 
   return (
     <Resizable direction="vertical">
@@ -42,14 +50,20 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
             input={cell.content}
           />
         </Resizable>
-        <Preview code={code} error={error} />
+        <div className="progress-wrapper">
+          {!bundle || bundle.loading ? (
+            <div className="progress-cover">
+              <progress className="progress is-small is-primary" max="100">
+                Loading...
+              </progress>
+            </div>
+          ) : (
+            <Preview code={bundle.code} error={bundle.error} />
+          )}
+        </div>
       </div>
     </Resizable>
   );
 };
 
 export default CodeCell;
-
-// <div>
-//   <button onClick={onClick}>Submit</button>
-// </div>

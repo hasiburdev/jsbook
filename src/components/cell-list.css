@@ -1,3 +1,10 @@
+.cell-list {
+  margin: 0 25px 25vh;
+}
 .force-visible .add-cell {
   opacity: 1;
+}
+
+.react-draggable-transparent-selection .cell-list {
+  margin-bottom: 100vh;
 }
