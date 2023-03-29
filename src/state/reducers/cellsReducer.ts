@@ -15,10 +15,23 @@ interface CellsState {
 const initialState: CellsState = {
   loading: false,
   error: null,
-  order: [],
-  data: {},
+  order: ["5zz", "kbm", "aci"],
+  data: {
+    kbm: {
+      content:
+        "import React from 'react';\nimport ReactDOM from 'react-dom';\n\nconst App = () => {\n    return <h1>App</h1>;\n}\n\nReactDOM.render(<App/>, document.querySelector(\"#root\"));",
+      type: "code",
+      id: "kbm",
+    },
+    "5zz": {
+      content:
+        "# JS Book\nAn online markdown editor.\n\nRun JavaScript on the browser!\n\nHere are some special features:\n\nEverything in client side JavaScript works.\n\nYou can also see the value of anything in screen using the special `show` function.\n\n```javascript\nshow(\"Hello\");   // Works with data.\nshow(variable);  // Works with variable.\nshow(<h1>Heading</h1>);  // Can display React Components also.\n```\n\nYou can write react as well.\n\n```javascript\nimport React from 'react';\nimport ReactDOM from 'react-dom';\n\nconst App = () => {\n    return <h1>App</h1>;\n}\n\nReactDOM.render(<App/>, document.querySelector(\"#root\"));\n```\nSome other features:\n\n- You can create as many code cells and text cells as you want. \n- You can reorganize the cells as you want.\n\nSome upcoming features I want to add:\n- [ ] Data persistence\n- [ ] Page sharing",
+      type: "text",
+      id: "5zz",
+    },
+    aci: { content: "", type: "text", id: "aci" },
+  },
 };
-
 const reducer = produce((state: CellsState = initialState, action: Action) => {
   switch (action.type) {
     case ActionType.UPDATE_CELL:
